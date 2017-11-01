@@ -19,12 +19,34 @@ var io = socketIO(server);
 
 app.use(express.static(publicPath));
 
-// io.on() lets you register an event listener (listen for specific event and doe something when it happens)
+// io.on() & socket.on() lets you register an event listener (listen for specific event and do something when it happens)
 // Web Sockets are PERSISTENT technology (client-server both keep the communication channel opened for as long as they want to)
 // Client socket will try to reconnect if server goes down
 // Connection - built-in events
 io.on('connection', (socket) => {
   console.log('New user connected');
+
+  // Emit: opposite of listener (create event)
+  // 2 arguments: Event, event data
+  // socket.emit('newEmail', {
+  //   from: 'mike@example.com',
+  //   text: 'Hey. What is going on?',
+  //   createdAt: 123
+  // });
+
+  // socket.on('createEmail', (newEmail) => {
+  //   console.log('createEmail', newEmail);
+  // });
+
+  socket.emit('newMessage', {
+    from: 'John',
+    text: 'See you then!',
+    createdAt: 123123
+  });
+
+  socket.on('createMessage', (message) => {
+    console.log('createMessage', message);
+  });
 
   socket.on('disconnect', () => {
     console.log('User was disconnected');

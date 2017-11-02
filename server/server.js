@@ -44,15 +44,39 @@ io.on('connection', (socket) => {
   //   createdAt: 123123
   // });
 
+  // socket.emit from Admin text Welcome to the chat app
+  socket.emit('newMessage', {
+    from: 'Admin',
+    text: 'Welcome to the chat app',
+    createdAt: new Date().getTime()
+  });
+
+  // socket.broadcast.emit from Admin text New user joined
+  socket.broadcast.emit('newMessage', {
+    from: 'Admin',
+    text: 'New user joined',
+    createdAt: new Date().getTime()
+  });
+
   socket.on('createMessage', (message) => {
     console.log('createMessage', message);
+
     // Socket.emit emits an event to a single connection
-    // Io.emit emits an event to EVERY single connection
+    // Io.emit emits an event to EVERY single connection including the current user
     io.emit('newMessage', {
       from: message.from,
       text: message.text,
       createdAt: new Date().getTime()
     });
+
+    // To broadcast, we have to specify individual socket
+    // This let the socketIO library know which user shouldn't get the event
+    // Broadcast.emit will send the event to everyone else except this user
+    // socket.broadcast.emit('newMessage', {
+    //   from: message.from,
+    //   text: message.text,
+    //   createdAt: new Date().getTime()
+    // });
   });
 
   socket.on('disconnect', () => {

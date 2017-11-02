@@ -38,14 +38,21 @@ io.on('connection', (socket) => {
   //   console.log('createEmail', newEmail);
   // });
 
-  socket.emit('newMessage', {
-    from: 'John',
-    text: 'See you then!',
-    createdAt: 123123
-  });
+  // socket.emit('newMessage', {
+  //   from: 'John',
+  //   text: 'See you then!',
+  //   createdAt: 123123
+  // });
 
   socket.on('createMessage', (message) => {
     console.log('createMessage', message);
+    // Socket.emit emits an event to a single connection
+    // Io.emit emits an event to EVERY single connection
+    io.emit('newMessage', {
+      from: message.from,
+      text: message.text,
+      createdAt: new Date().getTime()
+    });
   });
 
   socket.on('disconnect', () => {

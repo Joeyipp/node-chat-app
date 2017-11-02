@@ -7,6 +7,7 @@ const http = require('http');
 const express = require('express'); // BTS: express is using a built-in node module called HTTP to create a server
 const socketIO = require('socket.io');
 
+const {generateMessage} = require('./utils/message');
 const publicPath = path.join(__dirname, '../public');
 // console.log(__dirname + '/../public'); // Old way
 // console.log(publicPath);
@@ -45,29 +46,23 @@ io.on('connection', (socket) => {
   // });
 
   // socket.emit from Admin text Welcome to the chat app
-  socket.emit('newMessage', {
-    from: 'Admin',
-    text: 'Welcome to the chat app',
-    createdAt: new Date().getTime()
-  });
+  // socket.emit('newMessage', {
+  //   from: 'Admin',
+  //   text: 'Welcome to the chat app',
+  //   createdAt: new Date().getTime()
+  // });
+
+  socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
 
   // socket.broadcast.emit from Admin text New user joined
-  socket.broadcast.emit('newMessage', {
-    from: 'Admin',
-    text: 'New user joined',
-    createdAt: new Date().getTime()
-  });
+  socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
 
   socket.on('createMessage', (message) => {
     console.log('createMessage', message);
 
     // Socket.emit emits an event to a single connection
     // Io.emit emits an event to EVERY single connection including the current user
-    io.emit('newMessage', {
-      from: message.from,
-      text: message.text,
-      createdAt: new Date().getTime()
-    });
+    io.emit('newMessage', generateMessage(message.from, message.text));
 
     // To broadcast, we have to specify individual socket
     // This let the socketIO library know which user shouldn't get the event

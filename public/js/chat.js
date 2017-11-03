@@ -3,6 +3,12 @@
 // Creates a connection - listen/ send data (events)
 // Example email app: Server emits new email event, client listen for that event
 // ES6 functions on front-end only works on certain browser
+// location || window.location.search
+// jQuery.param({name: 'Andrew', age: 25});
+// "name=Andrew&age=25"
+// Param takes your object and returns the string
+// Deparam takes the string and returns the object
+
 var socket = io();
 
 function scrollToBottom() {
@@ -25,7 +31,18 @@ function scrollToBottom() {
 // 2 arguments: Event name, callback function
 // Connect and disconnect are built-in events
 socket.on('connect', function () {
-  console.log('Connected to server');
+  var params = jQuery.deparam(window.location.search);
+
+  socket.emit('join', params, function (err) {
+    if (err) {
+      alert(err);
+      // Manipulate the page where the user on
+      window.location.href = '/';
+    } else {
+      console.log('No error');
+    }
+  });
+  // console.log('Connected to server');
 
   // Client-side script that connect the server & emit event
   // socket.emit('createEmail', {

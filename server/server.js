@@ -8,6 +8,7 @@ const express = require('express'); // BTS: express is using a built-in node mod
 const socketIO = require('socket.io');
 
 const {generateMessage, generateLocationMessage} = require('./utils/message');
+const {isRealString} = require('./utils/validation');
 const publicPath = path.join(__dirname, '../public');
 // console.log(__dirname + '/../public'); // Old way
 // console.log(publicPath);
@@ -52,10 +53,25 @@ io.on('connection', (socket) => {
   //   createdAt: new Date().getTime()
   // });
 
-  socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
+  socket.on('join', (params, callback) => {
+    if (!isRealString(params.name) || !isRealString(params.room)) {
+      callback('Name and room name are required.');
+    }
 
-  // socket.broadcast.emit from Admin text New user joined
-  socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
+    // Join people in the same room
+    socket.join(params.room);
+    // socket.leave(params.room);
+
+    // io.emit emits to every single connected user
+    // io.to(params.room).emit emit message to everyone connected to the room
+    // socket.broadcast.emit sends message to everyone connected to the socket server except for the current user
+    // socket.broadcast.to(params.room).emit emit mesasge to everyone connected to the room except for the current user
+    // socket.emit emits message to specifically one user
+
+    socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
+    socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has joined.`));
+    callback();
+  });
 
   socket.on('createMessage', (message, callback) => {
     console.log('createMessage', message);

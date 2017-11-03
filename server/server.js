@@ -63,7 +63,7 @@ io.on('connection', (socket) => {
     // Socket.emit emits an event to a single connection
     // Io.emit emits an event to EVERY single connection including the current user
     io.emit('newMessage', generateMessage(message.from, message.text));
-    callback('This is from the server.');
+    callback();
     // To broadcast, we have to specify individual socket
     // This let the socketIO library know which user shouldn't get the event
     // Broadcast.emit will send the event to everyone else except this user

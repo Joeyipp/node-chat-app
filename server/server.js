@@ -7,7 +7,7 @@ const http = require('http');
 const express = require('express'); // BTS: express is using a built-in node module called HTTP to create a server
 const socketIO = require('socket.io');
 
-const {generateMessage} = require('./utils/message');
+const {generateMessage, generateLocationMessage} = require('./utils/message');
 const publicPath = path.join(__dirname, '../public');
 // console.log(__dirname + '/../public'); // Old way
 // console.log(publicPath);
@@ -72,6 +72,10 @@ io.on('connection', (socket) => {
     //   text: message.text,
     //   createdAt: new Date().getTime()
     // });
+  });
+
+  socket.on('createLocationMessage', (coords) => {
+    io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
   });
 
   socket.on('disconnect', () => {

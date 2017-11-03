@@ -5,6 +5,23 @@
 // ES6 functions on front-end only works on certain browser
 var socket = io();
 
+function scrollToBottom() {
+  // Selectors
+  var messages = jQuery('#messages');
+  var newMessage = messages.children('li:last-child');
+  // Heights
+  // .prop() = cross browser way to fetch a property
+  var clientHeight = messages.prop('clientHeight');
+  var scrollTop = messages.prop('scrollTop');
+  var scrollHeight = messages.prop('scrollHeight');
+  var newMessageHeight = newMessage.innerHeight();
+  var lastMessageHeight = newMessage.prev().innerHeight(); // 2nd last child in the list
+
+  if (clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight) {
+    messages.scrollTop(scrollHeight);
+  }
+};
+
 // 2 arguments: Event name, callback function
 // Connect and disconnect are built-in events
 socket.on('connect', function () {
@@ -43,6 +60,7 @@ socket.on('newMessage', function (message) {
   });
 
   jQuery('#messages').append(html);
+  scrollToBottom();
 
   // console.log('newMessage', message);
   // var li = jQuery('<li></li>');
@@ -61,6 +79,7 @@ socket.on('newLocationMessage', function (message) {
   });
 
   jQuery('#messages').append(html);
+  scrollToBottom();
 
   // var li = jQuery('<li></li>');
   // var a = jQuery('<a target="_blank">My current location</a>');

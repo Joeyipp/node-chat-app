@@ -2,6 +2,11 @@
 // That contains all the code that we need for the client to make the connection and to transfer data (client-server || server-client)
 // By loading the socket library to the html page (Scripts), the browser will have access to all sorts of methods available
 
+// Features List
+// Make room names case-insensitive
+// Make username unique
+// Add a list of currently active chat rooms in the main page (select drop-down)
+
 const path = require('path');
 const http = require('http');
 const express = require('express'); // BTS: express is using a built-in node module called HTTP to create a server

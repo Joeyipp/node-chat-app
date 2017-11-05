@@ -81,11 +81,15 @@ io.on('connection', (socket) => {
   });
 
   socket.on('createMessage', (message, callback) => {
-    console.log('createMessage', message);
+    // console.log('createMessage', message);
+    var user = users.getUser(socket.id);
 
+    if (user && isRealString(message.text)) {
+      io.to(user.room).emit('newMessage', generateMessage(user.name, message.text));
+    }
     // Socket.emit emits an event to a single connection
     // Io.emit emits an event to EVERY single connection including the current user
-    io.emit('newMessage', generateMessage(message.from, message.text));
+
     callback();
     // To broadcast, we have to specify individual socket
     // This let the socketIO library know which user shouldn't get the event
@@ -98,7 +102,11 @@ io.on('connection', (socket) => {
   });
 
   socket.on('createLocationMessage', (coords) => {
-    io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
+    var user = users.getUser(socket.id);
+
+    if (user) {
+      io.to(user.room).emit('newLocationMessage', generateMessage(user.name, coords.latitude, coords.longitude));
+    }
   });
 
   socket.on('disconnect', () => {
